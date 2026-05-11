@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "GPU Health Monitor"
+    orgId: 1
+    folder: "GPU"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

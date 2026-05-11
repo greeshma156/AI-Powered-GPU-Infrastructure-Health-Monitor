@@ -1,0 +1,56 @@
+groups:
+  - name: gpu_health_alerts
+    rules:
+
+      - alert: GPUHighTemperature
+        expr: dcgm_gpu_temp_celsius > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU {{ $labels.gpu_id }} temperature high"
+          description: "GPU {{ $labels.gpu_id }} ({{ $labels.gpu_name }}) temperature is {{ $value }}°C — above 80°C threshold."
+
+      - alert: GPUCriticalTemperature
+        expr: dcgm_gpu_temp_celsius > 90
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "GPU {{ $labels.gpu_id }} critical temperature"
+          description: "GPU {{ $labels.gpu_id }} temperature {{ $value }}°C — approaching thermal shutdown."
+
+      - alert: GPULowHealthScore
+        expr: dcgm_gpu_health_score < 60
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU {{ $labels.gpu_id }} health degraded"
+          description: "GPU {{ $labels.gpu_id }} health score is {{ $value }} — pre-failure indicators detected."
+
+      - alert: GPUCriticalHealthScore
+        expr: dcgm_gpu_health_score < 30
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "GPU {{ $labels.gpu_id }} critical health"
+          description: "GPU {{ $labels.gpu_id }} health score is {{ $value }} — immediate action required."
+
+      - alert: GPUXidErrors
+        expr: increase(dcgm_xid_errors_total[5m]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "GPU {{ $labels.gpu_id }} Xid error detected"
+          description: "GPU {{ $labels.gpu_id }} reported Xid {{ $labels.error_type }} error — possible hardware fault."
+
+      - alert: GPUHighMemoryUtilization
+        expr: dcgm_mem_utilization_percent > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU {{ $labels.gpu_id }} memory pressure"
+          description: "GPU {{ $labels.gpu_id }} memory utilization is {{ $value }}%."
