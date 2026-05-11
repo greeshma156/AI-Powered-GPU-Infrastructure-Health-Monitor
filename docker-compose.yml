@@ -1,18 +1,16 @@
 services:
 
-  # GPU Telemetry Simulator + Prometheus Exporter
   gpu-simulator:
     build: ./simulator
     container_name: gpu-simulator
     ports:
-      - "8000:8000"       # Prometheus metrics endpoint
+      - "8000:8000"
     environment:
-      - NUM_GPUS=4        # Number of simulated GPUs
+      - NUM_GPUS=4
       - SCRAPE_INTERVAL=15
     networks:
       - monitoring
 
-  # Prometheus — scrapes metrics every 15s
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -29,7 +27,6 @@ services:
     networks:
       - monitoring
 
-  # Alertmanager — handles firing alerts
   alertmanager:
     image: prom/alertmanager:latest
     container_name: alertmanager
@@ -40,7 +37,6 @@ services:
     networks:
       - monitoring
 
-  # Grafana — dashboards and visualisation
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -59,52 +55,39 @@ services:
     networks:
       - monitoring
 
-  # Elasticsearch — stores diagnostic logs
-  # elasticsearch:
-    # image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
-    # container_name: elasticsearch
-    # environment:
-  #     - discovery.type=single-node
-  #     - xpack.security.enabled=false
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #   ports:
-  #     - "9200:9200"
-  #   volumes:
-  #     - elasticsearch_data:/usr/share/elasticsearch/data
-  #   networks:
-  #     - monitoring
+  ai-detector:
+    build: ./ai_detector
+    container_name: ai-detector
+    ports:
+      - "8001:8001"
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ANALYSIS_INTERVAL=120
+      - METRICS_PORT=8001
+    depends_on:
+      - prometheus
+      - gpu-simulator
+    networks:
+      - monitoring
 
-  # # Logstash — ingests and transforms logs
-  # logstash:
-  #   image: docker.elastic.co/logstash/logstash:8.13.0
-  #   container_name: logstash
-  #   ports:
-  #     - "5044:5044"
-  #     - "5000:5000/udp"
-  #   volumes:
-  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - monitoring
-
-  # # Kibana — log visualisation
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:8.13.0
-  #   container_name: kibana
-  #   ports:
-  #     - "5601:5601"
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - monitoring
+  recovery-agent:
+    build: ./recovery
+    container_name: recovery-agent
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+      - ANOMALY_THRESHOLD=80
+      - CHECK_INTERVAL=30
+    depends_on:
+      - prometheus
+      - ai-detector
+    networks:
+      - monitoring
 
 volumes:
   prometheus_data:
   grafana_data:
-  # elasticsearch_data:
 
 networks:
   monitoring:
