@@ -1,0 +1,337 @@
+{
+  "uid": "gpu-health-monitor",
+  "title": "GPU Health Monitor",
+  "tags": ["gpu", "infrastructure", "health"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "15s",
+  "time": { "from": "now-30m", "to": "now" },
+  "panels": [
+
+    {
+      "id": 1,
+      "title": "GPU Temperature (°C)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 75 },
+              { "color": "red", "value": 85 }
+            ]
+          },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "dcgm_gpu_temp_celsius",
+          "legendFormat": "GPU {{gpu_id}} ({{gpu_name}})",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 2,
+      "title": "GPU Health Score (0–100)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 30 },
+              { "color": "yellow", "value": 60 },
+              { "color": "green", "value": 80 }
+            ]
+          },
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "dcgm_gpu_health_score",
+          "legendFormat": "GPU {{gpu_id}} health",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 3,
+      "title": "Current Temperature per GPU",
+      "type": "gauge",
+      "gridPos": { "x": 0, "y": 8, "w": 6, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 75 },
+              { "color": "red", "value": 85 }
+            ]
+          }
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true },
+      "targets": [
+        {
+          "expr": "dcgm_gpu_temp_celsius",
+          "legendFormat": "GPU {{gpu_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 4,
+      "title": "Current Health Score per GPU",
+      "type": "gauge",
+      "gridPos": { "x": 6, "y": 8, "w": 6, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 30 },
+              { "color": "yellow", "value": 60 },
+              { "color": "green", "value": 80 }
+            ]
+          }
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true },
+      "targets": [
+        {
+          "expr": "dcgm_gpu_health_score",
+          "legendFormat": "GPU {{gpu_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 5,
+      "title": "GPU Compute Utilization (%)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "dcgm_gpu_utilization_percent",
+          "legendFormat": "GPU {{gpu_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 6,
+      "title": "Memory Utilization (%)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 14, "w": 12, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 80 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "dcgm_mem_utilization_percent",
+          "legendFormat": "GPU {{gpu_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 7,
+      "title": "Power Draw (Watts)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 14, "w": 12, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "dcgm_power_usage_watts",
+          "legendFormat": "GPU {{gpu_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 8,
+      "title": "Xid Errors (total)",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 20, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "textMode": "auto" },
+      "targets": [
+        {
+          "expr": "sum by (gpu_id) (dcgm_xid_errors_total)",
+          "legendFormat": "GPU {{gpu_id}} Xid errors",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 9,
+      "title": "PCIe Replay Errors (total)",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 20, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 }
+            ]
+          }
+        }
+      },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+      "targets": [
+        {
+          "expr": "sum by (gpu_id) (dcgm_pcie_replay_errors_total)",
+          "legendFormat": "GPU {{gpu_id}} PCIe errors",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 10,
+      "title": "SM Clock Speed (MHz)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "meghertz",
+          "custom": { "lineWidth": 1, "fillOpacity": 5 }
+        }
+      },
+      "options": { "tooltip": { "mode": "multi" }, "legend": { "displayMode": "list", "placement": "bottom" } },
+      "targets": [
+        {
+          "expr": "dcgm_sm_clock_mhz",
+          "legendFormat": "GPU {{gpu_id}}",
+          "refId": "A"
+        }
+      ]
+    },
+
+    {
+      "id": 11,
+      "title": "Fleet Overview — Latest Values",
+      "type": "table",
+      "gridPos": { "x": 0, "y": 24, "w": 24, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": { "unit": "short" },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Temp (°C)" },    "properties": [{ "id": "unit", "value": "celsius" }] },
+          { "matcher": { "id": "byName", "options": "Power (W)" },    "properties": [{ "id": "unit", "value": "watt" }] },
+          { "matcher": { "id": "byName", "options": "Health Score" }, "properties": [
+            { "id": "unit", "value": "short" },
+            { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 30 }, { "color": "green", "value": 80 }] } },
+            { "id": "custom.displayMode", "value": "color-background" }
+          ]}
+        ]
+      },
+      "options": { "sortBy": [{ "displayName": "GPU ID" }] },
+      "transformations": [
+        { "id": "merge", "options": {} },
+        { "id": "organize", "options": {
+          "renameByName": {
+            "gpu_id": "GPU ID",
+            "gpu_name": "Model",
+            "Value #A": "Temp (°C)",
+            "Value #B": "Util (%)",
+            "Value #C": "Mem (%)",
+            "Value #D": "Power (W)",
+            "Value #E": "Health Score"
+          }
+        }}
+      ],
+      "targets": [
+        { "expr": "dcgm_gpu_temp_celsius",          "legendFormat": "", "refId": "A", "instant": true },
+        { "expr": "dcgm_gpu_utilization_percent",   "legendFormat": "", "refId": "B", "instant": true },
+        { "expr": "dcgm_mem_utilization_percent",   "legendFormat": "", "refId": "C", "instant": true },
+        { "expr": "dcgm_power_usage_watts",         "legendFormat": "", "refId": "D", "instant": true },
+        { "expr": "dcgm_gpu_health_score",          "legendFormat": "", "refId": "E", "instant": true }
+      ]
+    }
+
+  ]
+}
