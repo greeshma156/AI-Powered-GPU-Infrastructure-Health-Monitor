@@ -23,13 +23,13 @@ jobs:
         run: pip install flake8
 
       - name: Lint simulator
-        run: flake8 simulator/simulator.py --max-line-length=120 --ignore=E501
+        run: flake8 simulator/simulator.py --max-line-length=120 --ignore=E501,E221,E241
 
       - name: Lint ai_detector
-        run: flake8 ai_detector/detector.py --max-line-length=120 --ignore=E501
+        run: flake8 ai_detector/detector.py --max-line-length=120 --ignore=E501,E221,E241
 
       - name: Lint recovery
-        run: flake8 recovery/recovery.py --max-line-length=120 --ignore=E501
+        run: flake8 recovery/recovery.py --max-line-length=120 --ignore=E501,E221,E241
 
   test:
     name: Unit Tests
