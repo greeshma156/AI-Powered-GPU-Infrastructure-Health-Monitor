@@ -46,7 +46,7 @@ def simulate_recovery(gpu_id: str, gpu_name: str, score: float):
     time.sleep(1)
     logger.info(f"  Step 3: Flagging GPU {gpu_id} as quarantined in fleet registry...")
     time.sleep(1)
-    logger.info(f"  Step 4: Alerting on-call engineer via Alertmanager...")
+    logger.info("  Step 4: Alerting on-call engineer via Alertmanager...")
     time.sleep(1)
     logger.info(f"  Step 5: Submitting hardware inspection ticket for GPU {gpu_id}...")
     logger.info(f"[RECOVERY COMPLETE] GPU {gpu_id} quarantined at {datetime.utcnow().isoformat()}")
