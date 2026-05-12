@@ -114,7 +114,7 @@ class GPUSimulator:
             HEALTH_SCORE.labels(*labels).set(m["health"])
 
             if m["xid_error"]:
-                XID_ERRORS.labels(*labels, error_type="DBE").inc()
+                XID_ERRORS.labels(gpu_id=gpu["id"], gpu_name=gpu["name"], error_type="DBE").inc()
                 logger.warning(f"[GPU {gpu['id']}] Xid DBE error fired")
 
             if m["pcie_error"]:
